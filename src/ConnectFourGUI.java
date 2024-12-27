@@ -1,8 +1,8 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 public class ConnectFourGUI {
 
@@ -21,32 +21,24 @@ public class ConnectFourGUI {
     private JButton resetButton;
     private JCheckBox player1CheckBox;
     private JLabel Wins;
-    private JCheckBox AgainstAI;
     private JButton DoAIMove;
     private JFrame frame;
-
+    private boolean wonState = false;
     public String[] columnNames = {"1","2","3","4","5","6","7"};
-    public Integer[][] data;
-    public gameEngine engine;
 
-    public int aiPlaysAs = 2;
-
-
-    //buttons
-
-
+    public GameEngine engine;
 
     private void createUIComponents() {
         textArea1 = new JTextArea();
         textArea1.setText(rabbit);
 
-        engine = new gameEngine(6,7);
+        engine = new GameEngine(6,7);
         engine.resetBoard();
 
-        data = engine.boardState;
+
         board = new JTable();
         boardModel = new DefaultTableModel();
-        boardModel.setDataVector(data,columnNames);
+        boardModel.setDataVector(engine.boardState,columnNames);
         board.setModel(boardModel);
 
 
@@ -111,50 +103,36 @@ public class ConnectFourGUI {
         DoAIMove.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //ArrayList<Integer> a = engine.AITree(2, new ArrayList<Integer>(0), 8, engine.boardState, true);
-                aiPlaysAs = aiPlaysAs == 2 ? 1:2;
-                AIEngine test = new AIEngine(aiPlaysAs, 8, 0, -1, new ArrayList<Integer>(0), engine.boardState);
-                test.AIStartUp();
-                ArrayList<Integer> a = test.AIMovesList;
-                updateBoard(a.get(0), aiPlaysAs);
+                AIEngine test = new AIEngine(engine );
+                int move = test.getBestInitialMove(player1CheckBox.isSelected() ? 1:2);
+                updateBoard(move, player1CheckBox.isSelected() ? 1:2);
+
             }
         });
-
-
     }
-
-
-
-
 
     public static void main(String[] args) {
         ConnectFourGUI connectFourGUI = new ConnectFourGUI();
     }
 
-
-
     public void updateBoard(int col, int player){
-
-        if(col == -1){engine.resetBoard();} else {
-            int[] a = engine.checkWinTypeAll(engine.dropPiece(col, player,true, engine.boardState), player);
-            /*for(int i = 0; i < 4; i++){
-                System.out.print(" " + a[i]);
-            }
-            System.out.println("\n-------- player " + player );*/
-        }
-
-        data = engine.boardState;
-        boardModel.setDataVector(data,columnNames);
-
-        //ArrayList<Integer> a = engine.AITree(1, new ArrayList<Integer>(0), 8, engine.boardState);
-        //System.out.println(" \n player best moves \n");
-        //for (int i = 0; i<a.size();i++){
-        //    System.out.print(" Move " + i + ": " + a.get(i));
-        //}
+        if(col == -1 || wonState){
+            engine.resetBoard();
+            wonState = false;
+            textArea1.setBackground(Color.white);
+            textArea1.setText(rabbit);
+        } else {
+           if ( engine.anyWins(engine.dropPiece(col, player), player)) {
+               textArea1.setText("WINNER: \n" + "PLAYER " + player);
+               textArea1.setBackground(Color.ORANGE);
+               wonState = true;
+           }
+        };
+        boardModel.setDataVector(engine.boardState,columnNames);
+        engine.printBoardState(engine.boardState);
+        player1CheckBox.setSelected(!player1CheckBox.isSelected());
 
     }
-
-
 
     public String rabbit = "Art by Row\n" +
             "             ,\n" +
@@ -180,24 +158,3 @@ public class ConnectFourGUI {
 
 }
 
-
-/* failed fall animation
-public int fallAnim(int col, int endRow, int currentRow,  int player){
-
-        if(endRow == currentRow){
-            return 0;
-        } else {
-            board.setValueAt(player, currentRow, col);
-            if(!(currentRow == 0)){
-                board.setValueAt(null,currentRow - 1,col);
-            }
-
-            return fallAnim(col, endRow, currentRow + 1, player);
-        }
-    }
-    System.out.println(" \n ai best moves \n");
-                for (int i = 0; i<a.size();i++){
-                    System.out.print(a.get(i) + ", ");
-                }
-
- */
