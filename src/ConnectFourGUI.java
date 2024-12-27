@@ -1,5 +1,7 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,8 +37,23 @@ public class ConnectFourGUI {
         engine = new GameEngine(6,7);
         engine.resetBoard();
 
-
-        board = new JTable();
+        board = new JTable() {
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int rowIndex,
+                                             int columnIndex) {
+                JComponent component = (JComponent) super.prepareRenderer(renderer, rowIndex, columnIndex);
+                if (getValueAt(rowIndex, columnIndex) == null) {
+                    component.setBackground(Color.white);
+                }
+                else
+                if (getValueAt(rowIndex, columnIndex) == Integer.valueOf(1)) {
+                    component.setBackground(new Color(0x990210));
+                } else if (getValueAt(rowIndex, columnIndex) == Integer.valueOf(2)) {
+                    component.setBackground(new Color(0x100210));
+                }
+                return component;
+            }
+        };
         boardModel = new DefaultTableModel();
         boardModel.setDataVector(engine.boardState,columnNames);
         board.setModel(boardModel);
@@ -131,6 +148,7 @@ public class ConnectFourGUI {
         boardModel.setDataVector(engine.boardState,columnNames);
         engine.printBoardState(engine.boardState);
         player1CheckBox.setSelected(!player1CheckBox.isSelected());
+        board.getComponentAt(1,1).setBackground(Color.yellow);
 
     }
 
