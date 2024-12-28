@@ -11,8 +11,8 @@
       <component id="b8734" class="javax.swing.JTable" binding="board" custom-create="true">
         <constraints>
           <grid row="3" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="350" height="300"/>
-            <maximum-size width="350" height="300"/>
+            <preferred-size width="600" height="520"/>
+            <maximum-size width="600" height="520"/>
           </grid>
         </constraints>
         <properties>
@@ -25,9 +25,9 @@
           <focusCycleRoot value="false"/>
           <font/>
           <inheritsPopupMenu value="false"/>
-          <preferredScrollableViewportSize width="350" height="300"/>
+          <preferredScrollableViewportSize width="600" height="520"/>
           <requestFocusEnabled value="true"/>
-          <rowHeight value="50"/>
+          <rowHeight value="100"/>
           <rowSelectionAllowed value="false"/>
           <updateSelectionOnSort value="false"/>
           <verifyInputWhenFocusTarget value="false"/>
