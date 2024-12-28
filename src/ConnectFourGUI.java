@@ -1,10 +1,8 @@
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class ConnectFourGUI {
 
@@ -23,39 +21,33 @@ public class ConnectFourGUI {
     private JButton resetButton;
     private JCheckBox player1CheckBox;
     private JLabel Wins;
+    private JCheckBox AgainstAI;
     private JButton DoAIMove;
+    private JButton multiPurposeButtonButton;
     private JFrame frame;
-    private boolean wonState = false;
-    public String[] columnNames = {"1","2","3","4","5","6","7"};
 
-    public GameEngine engine;
+    public String[] columnNames = {"1","2","3","4","5","6","7"};
+    public Integer[][] data;
+    public gameEngine engine;
+
+    public int aiPlaysAs = 1;
+
+
+    //buttons
+
+
 
     private void createUIComponents() {
         textArea1 = new JTextArea();
         textArea1.setText(rabbit);
 
-        engine = new GameEngine(6,7);
+        engine = new gameEngine(6,7);
         engine.resetBoard();
 
-        board = new JTable() {
-            @Override
-            public Component prepareRenderer(TableCellRenderer renderer, int rowIndex,
-                                             int columnIndex) {
-                JComponent component = (JComponent) super.prepareRenderer(renderer, rowIndex, columnIndex);
-                if (getValueAt(rowIndex, columnIndex) == null) {
-                    component.setBackground(Color.white);
-                }
-                else
-                if (getValueAt(rowIndex, columnIndex) == Integer.valueOf(1)) {
-                    component.setBackground(new Color(0x990210));
-                } else if (getValueAt(rowIndex, columnIndex) == Integer.valueOf(2)) {
-                    component.setBackground(new Color(0x100210));
-                }
-                return component;
-            }
-        };
+        data = engine.boardState;
+        board = new JTable();
         boardModel = new DefaultTableModel();
-        boardModel.setDataVector(engine.boardState,columnNames);
+        boardModel.setDataVector(data,columnNames);
         board.setModel(boardModel);
 
 
@@ -112,6 +104,7 @@ public class ConnectFourGUI {
         resetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 engine.resetBoard();
                 updateBoard(-1,player1CheckBox.isSelected() ? 1:2);
             }
@@ -120,37 +113,44 @@ public class ConnectFourGUI {
         DoAIMove.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                AIEngine test = new AIEngine(engine );
-                int move = test.getBestInitialMove(player1CheckBox.isSelected() ? 1:2);
-                updateBoard(move, player1CheckBox.isSelected() ? 1:2);
+                //ArrayList<Integer> a = engine.AITree(2, new ArrayList<Integer>(0), 8, engine.boardState, true);
+                //engine.aiStratBranch(1, new ArrayList<Integer>(0), new ArrayList<Integer>(0), engine.boardState);
+                //engine.aiStratBranch(2, new ArrayList<Integer>(0), new ArrayList<Integer>(0), engine.boardState);
+                System.out.println(" ");
+                aiPlaysAs = aiPlaysAs == 2 ? 1:2;
+                AIEngine test = new AIEngine(aiPlaysAs, new Integer[] {-1,-1}, 100, 0, new ArrayList<Integer>(0), engine.boardState);
+                test.AIStartUp();
+                ArrayList<Integer> a = test.allOurMovesSoFar;
+                //System.out.println("AI moves: " + a);
 
+                updateBoard(a.get(0), aiPlaysAs);
+            }
+        });
+
+        multiPurposeButtonButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {//it always assumes it is our move first
+                System.out.println("player 1: " + engine.aiStratBranch(0,1, new ArrayList<Integer>(0), new ArrayList<Integer>(0), engine.boardState, 1,-1)[0]);
+                System.out.println("player 1: " + engine.aiStratBranch(0,2, new ArrayList<Integer>(0), new ArrayList<Integer>(0), engine.boardState, 1,-1)[0]);
             }
         });
     }
 
     public static void main(String[] args) {
+
         ConnectFourGUI connectFourGUI = new ConnectFourGUI();
     }
 
     public void updateBoard(int col, int player){
-        if(col == -1 || wonState){
-            engine.resetBoard();
-            wonState = false;
-            textArea1.setBackground(Color.white);
-            textArea1.setText(rabbit);
-        } else {
-           if ( engine.anyWins(engine.dropPiece(col, player), player)) {
-               textArea1.setText("WINNER: \n" + "PLAYER " + player);
-               textArea1.setBackground(Color.ORANGE);
-               wonState = true;
-           }
-        };
-        boardModel.setDataVector(engine.boardState,columnNames);
-        engine.printBoardState(engine.boardState);
-        player1CheckBox.setSelected(!player1CheckBox.isSelected());
-        board.getComponentAt(1,1).setBackground(Color.yellow);
-
+        boolean win = false;
+        if(col == -1){engine.resetBoard();} else {
+            win = engine.checkWinTypeAll(engine.dropPiece(col, player,true, engine.boardState), player);
+        }
+        data = engine.boardState;
+        boardModel.setDataVector(data,columnNames);
     }
+
+
 
     public String rabbit = "Art by Row\n" +
             "             ,\n" +

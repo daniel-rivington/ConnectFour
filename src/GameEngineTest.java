@@ -5,7 +5,7 @@ public class GameEngineTest  {
     }
 
     private static void testClone() throws Exception {
-        GameEngine ge = new GameEngine(6,7);
+        gameEngine ge = new gameEngine(6,7);
         ge.setBoardName("Test1 ");
         ge.getBoardState()[0][0] = 1;
         ge.getBoardState()[0][1] = 1;
@@ -15,7 +15,7 @@ public class GameEngineTest  {
         ge.getBoardState()[0][5] = 1;
         ge.getBoardState()[0][6] = 1;
         ge.setBoardName("ORiginal board");
-        GameEngine geClone = (GameEngine) ge.clone();
+        gameEngine geClone = (gameEngine) ge.clone();
         geClone.getBoardState()[0][6] = 2;
         geClone.setBoardName("Clone Board");
         ge.printBoardState(ge.getBoardState());
