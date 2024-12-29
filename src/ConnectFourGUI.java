@@ -134,20 +134,39 @@ public class ConnectFourGUI {
                 System.out.println("player 1: " + engine.aiStratBranch(0,2, new ArrayList<Integer>(0), new ArrayList<Integer>(0), engine.boardState, 1,-1)[0]);
             }
         });
+
+
     }
 
-    public static void main(String[] args) {
 
+
+
+
+    public static void main(String[] args) {
         ConnectFourGUI connectFourGUI = new ConnectFourGUI();
     }
 
+
+
     public void updateBoard(int col, int player){
-        boolean win = false;
+
         if(col == -1){engine.resetBoard();} else {
-            win = engine.checkWinTypeAll(engine.dropPiece(col, player,true, engine.boardState), player);
+            int[] a = engine.checkWinTypeAll(engine.dropPiece(col, player,true, engine.boardState), player);
+            /*for(int i = 0; i < 4; i++){
+                System.out.print(" " + a[i]);
+            }
+            System.out.println("\n-------- player " + player );*/
         }
+
         data = engine.boardState;
         boardModel.setDataVector(data,columnNames);
+
+        //ArrayList<Integer> a = engine.AITree(1, new ArrayList<Integer>(0), 8, engine.boardState);
+        //System.out.println(" \n player best moves \n");
+        //for (int i = 0; i<a.size();i++){
+        //    System.out.print(" Move " + i + ": " + a.get(i));
+        //}
+
     }
 
 
@@ -176,3 +195,24 @@ public class ConnectFourGUI {
 
 }
 
+
+/* failed fall animation
+public int fallAnim(int col, int endRow, int currentRow,  int player){
+
+        if(endRow == currentRow){
+            return 0;
+        } else {
+            board.setValueAt(player, currentRow, col);
+            if(!(currentRow == 0)){
+                board.setValueAt(null,currentRow - 1,col);
+            }
+
+            return fallAnim(col, endRow, currentRow + 1, player);
+        }
+    }
+    System.out.println(" \n ai best moves \n");
+                for (int i = 0; i<a.size();i++){
+                    System.out.print(a.get(i) + ", ");
+                }
+
+ */
