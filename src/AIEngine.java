@@ -2,6 +2,7 @@ import java.util.ArrayList;
 
 public class AIEngine {
     public int player;
+    public int num;
     public Integer[][] exBoardState;
     public int depth;
     public int debt;
